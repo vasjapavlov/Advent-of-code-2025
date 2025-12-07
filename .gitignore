@@ -1,0 +1,10 @@
+# Xcode
+*.xcodeproj/
+*.xcworkspace/
+xcuserdata/
+
+# Build artifacts
+build/
+DerivedData/
+*.o
+*.out
