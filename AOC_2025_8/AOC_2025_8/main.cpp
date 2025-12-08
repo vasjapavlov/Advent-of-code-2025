@@ -89,7 +89,6 @@ long long solve2(vector<Vertex> points) {
     return -1;
 }
 
-
 int main(int argc, const char * argv[]) {
     ifstream fin("input");
     
@@ -107,7 +106,6 @@ int main(int argc, const char * argv[]) {
         p.i = cnt++;
         points.push_back(p);
     }
-    
     
     auto res1 = measureTime([&points]() {
         return solve(points);
