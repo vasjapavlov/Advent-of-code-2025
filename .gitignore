@@ -8,3 +8,6 @@ build/
 DerivedData/
 *.o
 *.out
+
+# Input files
+input
