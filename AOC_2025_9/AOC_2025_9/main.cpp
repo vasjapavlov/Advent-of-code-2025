@@ -109,37 +109,65 @@ void createMap(vector<int> &r, vector<int> &c) {
     }
 }
 
+/*
+ dp[i][j] -> how many '.' are there in the rectangle
+ with a top-left corner at [0][0] and a bottomRight corner at [i][j];
+ */
+int dp[501][501];
+void calculatePrefixSum() {
+    dp[0][0] = (marked[0][0] == '.');
+    for(int j = 1; j < 500; j++) {
+        dp[0][j] = dp[0][j-1] + (marked[0][j] == '.');
+    }
+    
+    for(int i = 1; i < 500; i++) {
+        dp[i][0] = dp[i-1][0] + (marked[i][0] == '.');
+    }
+    
+    for(int i = 1; i < 500; i++) {
+        for(int j = 1; j < 500; j++) {
+            dp[i][j] =
+            dp[i-1][j] +
+            dp[i][j-1] -
+            dp[i-1][j-1] +
+            (marked[i][j] == '.');
+        }
+    }
+}
+
+// Rect is valid if it doesn't contain any '.'
+bool isValid(int i1, int j1, int i2, int j2) {
+    int mni = min(i1,i2);
+    int mnj = min(j1,j2);
+    int mxi = max(i1,i2);
+    int mxj = max(j1,j2);
+    int count = dp[mxi][mxj];
+    if(mnj > 0) count -= dp[mxi][mnj-1];
+    if(mni > 0) count -= dp[mni-1][mxj];
+    if(mni > 0 && mnj > 0) count += dp[mni-1][mnj-1];
+    return count == 0;
+}
+
 long long solve2(vector<int> &r, vector<int> &c) {
     int n = (int)r.size();
     minimize(r, c);
     createMap(r, c);
     // A point inside; Found manually by exploring minimized map.
     bfs(227,378);
+    calculatePrefixSum();
     
     long long res = 0;
     for(int i = 0; i < n; i++) {
-        for(int j = 0; j < n; j++) {
-            if(i == j) continue;
+        for(int j = i + 1; j < n; j++) {
             int r1 = mp[r[i]];
             int c1 = mp[c[i]];
             int r2 = mp[r[j]];
             int c2 = mp[c[j]];
-            bool isOk = true;
-            for(int rr = min(r1,r2); rr <= max(r1,r2); rr++) {
-                if(!isOk) break;
-                for(int cc = min(c1,c2); cc <= max(c1,c2); cc++) {
-                    if(marked[rr][cc] == '.') {
-                        isOk = false;
-                        break;
-                    }
-                }
-            }
-            if(isOk) {
+            if(isValid(r1, c1, r2, c2)) {
                 res = max(res, area(rmp[r1],rmp[c1],rmp[r2],rmp[c2]));
             }
         }
     }
-
     return res;
 }
 
