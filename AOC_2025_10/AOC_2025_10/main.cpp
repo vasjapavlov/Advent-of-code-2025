@@ -95,86 +95,13 @@ int solve(vector<Machine> machines) {
     return res;
 }
 
-bool isDone(vector<int> &state) {
-    for(int i = 0; i < state.size(); i++) {
-        if(state[i] > 0) return false;
-    }
-    return true;
-}
-
-struct VectorHash {
-    size_t operator()(const vector<int>& v) const {
-        size_t seed = v.size();
-        for(int i : v) {
-            // A simple combined hash function
-            seed ^= hash<int>()(i) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-        }
-        return seed;
-    }
-};
-
-int solve2(vector<Machine> machines) {
-    int res = 0;
-    for(int t = 0; t < machines.size(); t++) {
-        cout << "Machine #" << t << endl;
-        Machine m = machines[t];
-        vector<int> tmp;
-        for(int i = 0; i < m.joltage.size(); i++) {
-            tmp.push_back(m.joltage[i]);
-        }
-        
-        queue<vector<int>> q;
-        unordered_map<vector<int>, int, VectorHash> mp;
-        q.push(tmp);
-        
-        mp[tmp] = 0;
-        while(!q.empty()) {
-            tmp = q.front();
-            q.pop();
-            if(isDone(tmp)) {
-                res += mp[tmp];
-                break;
-            }
-            int nb = (int)m.buttons.size();
-            for(int i = 0; i < nb; i++) {
-                int btn = m.buttons[i];
-                vector<int> tmp2 = tmp;
-                bool ok = true;
-                for(int k = 0; k < m.joltage.size(); k++) {
-                    if((btn & (1 << k)) != 0) {
-                        tmp2[k]--;
-                        if(tmp2[k] < 0) {ok = false; break; }
-                    }
-                }
-                if(ok) {
-                    if(mp.find(tmp2) == mp.end()) {
-                        q.push(tmp2);
-                        mp[tmp2] = mp[tmp] + 1;
-                    }
-                }
-                
-            }
-        }
-    }
-    return res;
-}
-
-// 10, 10, 5
-// (1,2), (1,2,3)
-
 int main(int argc, const char * argv[]) {
     ifstream fin("input");
     string s;
     
     vector<Machine> machines;
-    int mx = 0;
     while(getline(fin, s)) {
         machines.push_back(parseMachine(s));
-//        mx = max(mx, (int)machines[machines.size()-1].buttons.size());
-        mx = max(mx, (int)machines[machines.size()-1].joltage.size());
-        for(int i = 0; i <machines[machines.size()-1].joltage.size(); i++) {
-            mx = max(mx, machines[machines.size()-1].joltage[i]);
-        }
     }
 
     auto res1 = measureTime([&machines]() {
