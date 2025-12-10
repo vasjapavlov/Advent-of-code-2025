@@ -25,8 +25,7 @@ long long solve(vector<int> r, vector<int> c) {
     
     long long res = 0;
     for(int i = 0; i < n; i++) {
-        for(int j = 0; j < n; j++) {
-            if(i == j) continue;
+        for(int j = i+1; j < n; j++) {
             res = max(res, ((long long)abs(r[i]-r[j])+1) * (abs(c[i]-c[j]) + 1) );
         }
     }
@@ -136,7 +135,7 @@ void calculatePrefixSum() {
 }
 
 // Rect is valid if it doesn't contain any '.'
-bool isValid(int i1, int j1, int i2, int j2) {
+bool isValid(int &i1, int &j1, int &i2, int &j2) {
     int mni = min(i1,i2);
     int mnj = min(j1,j2);
     int mxi = max(i1,i2);
