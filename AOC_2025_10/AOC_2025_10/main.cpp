@@ -57,7 +57,6 @@ struct Machine {
         buttons = _buttons;
         joltage = _joltage;
     }
-    
 };
 
 Machine parseMachine(string s) {
